@@ -2,7 +2,7 @@
  * @Description: socket 编程之 client.c
  * @Author: TOTHTOT
  * @Date: 2023-01-06 15:11:22
- * @LastEditTime: 2023-01-09 16:47:31
+ * @LastEditTime: 2023-01-10 14:41:28
  * @LastEditors: TOTHTOT
  * @FilePath: \am335x_project\5_socket\2_udp\client.c
  */
@@ -62,7 +62,7 @@ static void *thr_receive_from_serve(void *ptr)
     while (1)
     {
         recv_len = recv(thr_data.sfd_server, buf, 999, 0);
-        if (recv_len < 0)
+        if (recv_len <= 0)
         {
             fprintf(stderr, "recv() err\n");
             break;
