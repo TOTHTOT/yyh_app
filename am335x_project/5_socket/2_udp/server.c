@@ -2,7 +2,7 @@
  * @Description: socket 编程之 server.c
  * @Author: TOTHTOT
  * @Date: 2023-01-06 10:57:42
- * @LastEditTime: 2023-01-10 17:40:02
+ * @LastEditTime: 2023-01-10 17:55:05
  * @LastEditors: TOTHTOT
  * @FilePath: \am335x_project\5_socket\2_udp\server.c
  */
@@ -72,7 +72,7 @@ struct client_num_st
 {
     int sfd_server;                                       // 服务器的 sfd
     int epfd;                                             // epoll 描述符
-    struct epoll_event ep_event[SERVER_MAXNUM];           // epfd 的事假绑定
+    struct epoll_event ep_event[SERVER_MAXNUM];           // epfd 的事假绑定, 每个 ep_event 都要有自己的 ep_event_data
     struct ep_event_data_st ep_event_data[SERVER_MAXNUM]; // 此结构体用于传输 epoll 的数据
     struct thr_connect_data_st *thr_connect_data;         // 该指针指向 thr_server_link 线程的 thr_connect_data
     int current_num;                                      // 正在准备连接编号数量, 实际连接数是-1, 理论上应该小于 SERVER_MAXNUM
@@ -160,6 +160,8 @@ int repay_client_num(struct client_num_st *client_num, int num)
         fprintf(stderr, "epoll_ctl() err:%s, line:%d\n", strerror(epoll_ret), __LINE__);
         exit(-1);
     }
+    
+    close(client_num_to_sfd(*client_num, num));
     // 正常流程
     client_num->current_num--;            // 总使用数减一
     client_num->client_num_flag[num] = 0; // 对应位置0
@@ -169,7 +171,6 @@ int repay_client_num(struct client_num_st *client_num, int num)
         client_num->server_link_state = STATE_UNLINKED;
         DEBUG_PRINT("server_link_state:STATE_UNLINKED\n");
     }
-
     return 0;
 }
 /**
@@ -305,7 +306,7 @@ static void *thr_server_send(void *ptr)
         {
             printf("Which client? Please input %d ~ %d.\n", 0, p_thr_client->current_num - 1);
             scanf("%d", &input_client_num);
-            if (input_client_num > p_thr_client->current_num - 1)
+            if (input_client_num > p_thr_client->current_num - 2)
             {
                 printf("Out of maximum number! Please reenter.\n");
                 continue;
