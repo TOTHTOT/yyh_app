@@ -1,0 +1,13 @@
+{
+    "files.associations": {
+        "pthread.h": "c",
+        "stdio.h": "c",
+        "socket.h": "c",
+        "un.h": "c",
+        "in.h": "c",
+        "string.h": "c",
+        "syslog.h": "c",
+        "errno.h": "c",
+        "features.h": "c"
+    }
+}
