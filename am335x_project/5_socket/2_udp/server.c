@@ -2,7 +2,7 @@
  * @Description: socket 编程之 server.c
  * @Author: TOTHTOT
  * @Date: 2023-01-06 10:57:42
- * @LastEditTime: 2023-01-10 17:55:05
+ * @LastEditTime: 2023-01-11 10:02:51
  * @LastEditors: TOTHTOT
  * @FilePath: \am335x_project\5_socket\2_udp\server.c
  */
@@ -17,10 +17,12 @@
 #include <unistd.h>
 #include <errno.h>
 #include <sys/epoll.h>
+#include <sys/sem.h>
+#include <sys/ipc.h>
 
-#define DEBUG_FLAG 1     // 该宏用于控制是否输出 debug 信息
-#define SERVE_PORT 8888  // 端口
-#define SERVER_MAXNUM 10 // 最大连接 client 数
+#define DEBUG_FLAG 1    // 该宏用于控制是否输出 debug 信息
+#define SERVE_PORT 8888 // 端口
+#define SERVER_MAXNUM 2 // 最大连接 client 数
 
 #if DEBUG_FLAG == 1
 #include <stdarg.h>
@@ -75,7 +77,8 @@ struct client_num_st
     struct epoll_event ep_event[SERVER_MAXNUM];           // epfd 的事假绑定, 每个 ep_event 都要有自己的 ep_event_data
     struct ep_event_data_st ep_event_data[SERVER_MAXNUM]; // 此结构体用于传输 epoll 的数据
     struct thr_connect_data_st *thr_connect_data;         // 该指针指向 thr_server_link 线程的 thr_connect_data
-    int current_num;                                      // 正在准备连接编号数量, 实际连接数是-1, 理论上应该小于 SERVER_MAXNUM
+    int sem_id;                                           // 信号量
+    int current_num;                                      // 使用信号量, 正在准备连接编号数量, 实际连接数是-1, 理论上应该小于 SERVER_MAXNUM
     enum server_link_state_em server_link_state;          // server 连接状态
     char client_num_flag[SERVER_MAXNUM];                  // 此数组的每一位用于表示每个 client 编号的状态, 等于0 未被使用, 等于1 正在被使用,其它值未定义, 能够管理最大 SERVER_MAXNUM 个
 };
@@ -114,12 +117,12 @@ int ret_available_client_num(struct client_num_st *client_num)
     if (client_num->current_num <= SERVER_MAXNUM)
     {
         // 寻找没被使用的编号
-        for (i = 0; i < SERVER_MAXNUM; i++)
+        for (i = 0; i <= SERVER_MAXNUM; i++)
         {
             if (client_num->client_num_flag[i] == 0x30) // 找到了
             {
-                printf("find\n");
-                client_num->client_num_flag[i] = 1;
+                // printf("find\n");
+                client_num->client_num_flag[i] = 0x31;
                 client_num->current_num++;
                 DEBUG_PRINT("current_num:%d, return:%d\n", client_num->current_num, i);
                 return i;
@@ -143,6 +146,7 @@ int ret_available_client_num(struct client_num_st *client_num)
 int repay_client_num(struct client_num_st *client_num, int num)
 {
     int epoll_ret;
+    int sfd = client_num_to_sfd(*client_num, num);
 
     if (num > SERVER_MAXNUM) // 参数非法
     {
@@ -150,24 +154,25 @@ int repay_client_num(struct client_num_st *client_num, int num)
     }
 
     // 传入的编号已经是0了, 如果没有就会导致编号总数错误的减1
-    if (client_num->client_num_flag[num] == 0)
+    if (client_num->client_num_flag[num] == 0x30)
     {
         return -2;
     }
 
-    if ((epoll_ret = epoll_ctl(client_num->epfd, EPOLL_CTL_DEL, client_num_to_sfd(*client_num, num), &client_num->ep_event[num])) < 0)
+    if ((epoll_ret = epoll_ctl(client_num->epfd, EPOLL_CTL_DEL, sfd, &client_num->ep_event[num])) < 0)
     {
         fprintf(stderr, "epoll_ctl() err:%s, line:%d\n", strerror(epoll_ret), __LINE__);
         exit(-1);
     }
-    
-    close(client_num_to_sfd(*client_num, num));
+
+    close(sfd);
     // 正常流程
-    client_num->current_num--;            // 总使用数减一
-    client_num->client_num_flag[num] = 0; // 对应位置0
+    client_num->current_num--;               // 总使用数减一
+    client_num->client_num_flag[num] = 0x30; // 对应位置0
 
     if (client_num->current_num == 1) // 减成1了就说明现在没有 client 连接, 那就进入 STATE_UNLINKED
     {
+        client_num->current_num = 0;
         client_num->server_link_state = STATE_UNLINKED;
         DEBUG_PRINT("server_link_state:STATE_UNLINKED\n");
     }
@@ -199,7 +204,7 @@ static void *thr_connect(void *ptr)
             epoll_ret = epoll_wait(p_data->manage_client->epfd, &p_data->manage_client->ep_event[0], SERVER_MAXNUM, -1);
             if (epoll_ret > 0)
             {
-                DEBUG_PRINT("wait end,epoll_ret:%d\n", epoll_ret);
+                // DEBUG_PRINT("wait end,epoll_ret:%d\n", epoll_ret);
                 // 遍历监听事件中符合条件的 fd
                 for (i = 0; i < epoll_ret; i++)
                 {
@@ -207,7 +212,7 @@ static void *thr_connect(void *ptr)
                     {
                         // 从epoll_wait 返回的数据中获取数据
                         p_ep_event_data = (struct ep_event_data_st *)p_data->manage_client->ep_event[i].data.ptr;
-                        DEBUG_PRINT("i:%d, sfd:%d, num:%d\n", i, p_ep_event_data->fd, p_ep_event_data->my_client_num);
+                        // DEBUG_PRINT("i:%d, sfd:%d, num:%d\n", i, p_ep_event_data->fd, p_ep_event_data->my_client_num);
                         // 主机接数据
                         recv_len = recv(p_ep_event_data->fd, recv_buf, 999, 0);
                         if (recv_len <= 0) // == -1 出错, == 0 客户端掉线
@@ -280,6 +285,7 @@ static void *thr_server_link(void *ptr)
         else
         {
             fprintf(stderr, "ret_available_client_num() err: no space\n");
+            usleep(50000);
             // break;
         }
     }
@@ -377,6 +383,16 @@ int main(int argc, char **argv)
         perror("epoll_create() err");
         exit(-1);
     }
+#if 0
+    // 注册信号, 收到 SIGINT 就关闭 socket 结束进程
+    if (signal(SIGINT, sig_handle) == SIG_ERR)
+    {
+        perror("signal() err");
+        exit(-1);
+    }
+#endif
+    
+    client.sem_id = semget(IPC_PRIVATE, client.)
 
     memset(client.client_num_flag, '0', sizeof(client.client_num_flag));
     client.current_num = 0;
