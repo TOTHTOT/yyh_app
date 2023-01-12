@@ -2,7 +2,7 @@
  * @Description: socket 编程之 server.c
  * @Author: TOTHTOT
  * @Date: 2023-01-06 10:57:42
- * @LastEditTime: 2023-01-12 16:03:55
+ * @LastEditTime: 2023-01-12 16:58:06
  * @LastEditors: TOTHTOT
  * @FilePath: \am335x_project\5_socket\2_udp\server.c
  */
@@ -20,6 +20,7 @@
 #include <sys/sem.h>
 #include <sys/ipc.h>
 #include <semaphore.h>
+#include <signal.h>
 
 static void *thr_server_send(void *ptr);
 static void *thr_connect(void *ptr);
@@ -99,7 +100,49 @@ struct client_num_st
     int real_num;                                                   // 真实的 client 连接数, 在 set_client_num_link() 里加1 在 repay_client_num() 函数里减1
     enum server_link_state_em server_link_state;                    // server 连接状态
     enum client_num_state_em client_num_flag[SERVER_MAXNUM];        // 此数组的每一位用于表示每个 client 编号的状态, 等于0 未被使用, 等于1 正在被使用,其它值未定义, 能够管理最大 SERVER_MAXNUM 个
+    char exit_flag;                                                 // 程序退出标志位
 };
+
+// 全局变量因为需要使用信号
+struct client_num_st g_client_num; // 管理 client_num 编号的结构体
+
+/**
+ * @name: sig_handle
+ * @msg: 信号处理函数
+ * @param {int} sig
+ * @return {*}
+ */
+void sig_handle(int sig)
+{
+    int ret;
+
+    switch (sig)
+    {
+    case SIGINT:
+        printf("start canael thread\n");
+        ret = pthread_cancel(g_client_num.tid_client_connect);
+        if (ret < 0)
+        {
+            perror("pthread_cancel() err");
+        }
+        ret = pthread_cancel(g_client_num.tid_server_link);
+        if (ret < 0)
+        {
+            perror("pthread_cancel() err");
+        }
+        ret = pthread_cancel(g_client_num.tid_server_send);
+        if (ret < 0)
+        {
+            perror("pthread_cancel() err");
+        }
+        printf("end canael thread\n");
+        g_client_num.exit_flag = 0;
+        break;
+
+    default:
+        break;
+    }
+}
 
 /**
  * @name: client_num_to_sfd
@@ -252,7 +295,6 @@ int repay_client_num(struct client_num_st *client_num, int num)
     return 0;
 }
 
-
 /**
  * @name: judge_client_num_is_available
  * @msg: 判断传入的编号是有有client连接
@@ -265,14 +307,11 @@ int judge_client_num_is_available(const struct client_num_st client_num, int num
 {
     int i;
 
-    if(client_num.client_num_flag[num] == NUM_LOCK_LINK)
+    if (client_num.client_num_flag[num] == NUM_LOCK_LINK)
         return 0;
     else
         return -1;
-    
 }
-
-
 
 /**
  * @name: thr_connect
@@ -488,21 +527,21 @@ static void *thr_server_send(void *ptr)
 int main(int argc, char **argv)
 {
     struct sockaddr_in socket_server_addr; // 服务器地址
-    struct client_num_st client_num;       // 管理 client_num 编号的结构体
 
-    // 初始化 client_num 数据
-    client_num.server_link_state = STATE_UNLINKED;
-    client_num.real_num = 0;
+    // 初始化 g_client_num 数据
+    g_client_num.server_link_state = STATE_UNLINKED;
+    g_client_num.real_num = 0;
+    g_client_num.exit_flag = 1;
     // 初始化 读写锁
-    if (pthread_rwlock_init(&client_num.client_num_rw_lock, NULL) < 0)
+    if (pthread_rwlock_init(&g_client_num.client_num_rw_lock, NULL) < 0)
     {
         perror("pthread_rwlock_init() err");
         exit(-1);
     }
 
     // 申请一个 socket 描述符
-    client_num.sfd_server = socket(AF_INET, SOCK_STREAM, 0);
-    if (client_num.sfd_server == -1)
+    g_client_num.sfd_server = socket(AF_INET, SOCK_STREAM, 0);
+    if (g_client_num.sfd_server == -1)
     {
         perror("socket() err");
         exit(-1);
@@ -515,80 +554,83 @@ int main(int argc, char **argv)
     memset(socket_server_addr.sin_zero, 0, 8);
 
     // 绑定ip及端口
-    if (bind(client_num.sfd_server, (const struct sockaddr *)&socket_server_addr, sizeof(socket_server_addr)) < 0)
+    if (bind(g_client_num.sfd_server, (const struct sockaddr *)&socket_server_addr, sizeof(socket_server_addr)) < 0)
     {
         perror("bind() err");
         exit(-1);
     }
 
     // 监听
-    if (listen(client_num.sfd_server, SERVER_MAXNUM) < 0)
+    if (listen(g_client_num.sfd_server, SERVER_MAXNUM) < 0)
     {
         perror("listen() err");
         exit(-1);
     }
 
     // 创建一个epoll, thr_connect 线程使用
-    client_num.epfd = epoll_create(SERVER_MAXNUM);
-    if (client_num.epfd < 0)
+    g_client_num.epfd = epoll_create(SERVER_MAXNUM);
+    if (g_client_num.epfd < 0)
     {
         perror("epoll_create() err");
         exit(-1);
     }
-#if 0
+
     // 注册信号, 收到 SIGINT 就关闭 socket 结束进程
     if (signal(SIGINT, sig_handle) == SIG_ERR)
     {
         perror("signal() err");
         exit(-1);
     }
-#endif
 
     // 初始化信号量
-    if (sem_init(&client_num.my_sem, 0, SERVER_MAXNUM) < 0)
+    if (sem_init(&g_client_num.my_sem, 0, SERVER_MAXNUM) < 0)
     {
         perror("sem_init() err");
         exit(-1);
     }
 
     // 初始化数据
-    memset(client_num.client_num_flag, NUM_UNLOCK, sizeof(client_num.client_num_flag));
-    client_num.current_num = 0;
-    // 该线程用于处理 client_num 的连接请求
-    if (pthread_create(&client_num.tid_server_link, NULL, thr_server_link, (void *)&client_num))
+    memset(g_client_num.client_num_flag, NUM_UNLOCK, sizeof(g_client_num.client_num_flag));
+    g_client_num.current_num = 0;
+    // 该线程用于处理 g_client_num 的连接请求
+    if (pthread_create(&g_client_num.tid_server_link, NULL, thr_server_link, (void *)&g_client_num))
     {
         perror("pthread_create() err\n");
         exit(-1);
     }
 
     // 该线程用于接收来自终端的数据, 然后根据编号发给对应的连接设备
-    if (pthread_create(&client_num.tid_server_send, NULL, thr_server_send, (void *)&client_num) < 0)
+    if (pthread_create(&g_client_num.tid_server_send, NULL, thr_server_send, (void *)&g_client_num) < 0)
     {
         perror("pthread_create() err\n");
         exit(-1);
     }
 
     // 为 thr_connect 线程准备参数
-    client_num.thr_connect_data = malloc(sizeof(*client_num.thr_connect_data));
-    if (client_num.thr_connect_data == NULL)
+    g_client_num.thr_connect_data = malloc(sizeof(*g_client_num.thr_connect_data));
+    if (g_client_num.thr_connect_data == NULL)
     {
         fprintf(stderr, "malloc() err: no space!\n");
         exit(-1);
     }
-    client_num.thr_connect_data->manage_client = &client_num; // 结构体互引用, thr_connect 线程需要用到 epfd和ep_event 所以要把这个传给它
-    // 此线程用于接收 client_num 发送的数据
-    if (pthread_create(&client_num.tid_client_connect, NULL, thr_connect, (void *)client_num.thr_connect_data) < 0)
+    g_client_num.thr_connect_data->manage_client = &g_client_num; // 结构体互引用, thr_connect 线程需要用到 epfd和ep_event 所以要把这个传给它
+    // 此线程用于接收 g_client_num 发送的数据
+    if (pthread_create(&g_client_num.tid_client_connect, NULL, thr_connect, (void *)g_client_num.thr_connect_data) < 0)
     {
         perror("pthread_create() err");
         exit(-1);
     }
 
-    while (1)
+    while (g_client_num.exit_flag == 1)
     {
-        // pthread_join()
+        
+        pause();
     }
+
     // 创建的线程还没回收
-    close(client_num.sfd_server); // 关闭服务器
-    close(client_num.epfd);       // 关闭 epoll
+    close(g_client_num.sfd_server); // 关闭服务器
+    close(g_client_num.epfd);       // 关闭 epoll
+
+    printf("END\n");
     return 0;
 }
