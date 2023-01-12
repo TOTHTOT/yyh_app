@@ -2,10 +2,10 @@
  * @Description: socket 编程之 server.c
  * @Author: TOTHTOT
  * @Date: 2023-01-06 10:57:42
- * @LastEditTime: 2023-01-12 16:58:06
+ * @LastEditTime: 2023-01-12 17:02:17
  * @LastEditors: TOTHTOT
- * @FilePath: \am335x_project\5_socket\2_udp\server.c
- */
+ * @FilePath: \am335x_project\5_socket\2_tcp_V2.0\server.c
+ */ 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
