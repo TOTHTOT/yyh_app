@@ -96,24 +96,24 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named udp_client
+# Target rules for targets named tcp_client
 
 # Build rule for target.
-udp_client: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 udp_client
-.PHONY : udp_client
+tcp_client: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 tcp_client
+.PHONY : tcp_client
 
 # fast build rule for target.
-udp_client/fast:
-	$(MAKE) -f CMakeFiles/udp_client.dir/build.make CMakeFiles/udp_client.dir/build
-.PHONY : udp_client/fast
+tcp_client/fast:
+	$(MAKE) -f CMakeFiles/tcp_client.dir/build.make CMakeFiles/tcp_client.dir/build
+.PHONY : tcp_client/fast
 
 client.o: client.c.o
 .PHONY : client.o
 
 # target to build an object file
 client.c.o:
-	$(MAKE) -f CMakeFiles/udp_client.dir/build.make CMakeFiles/udp_client.dir/client.c.o
+	$(MAKE) -f CMakeFiles/tcp_client.dir/build.make CMakeFiles/tcp_client.dir/client.c.o
 .PHONY : client.c.o
 
 client.i: client.c.i
@@ -121,7 +121,7 @@ client.i: client.c.i
 
 # target to preprocess a source file
 client.c.i:
-	$(MAKE) -f CMakeFiles/udp_client.dir/build.make CMakeFiles/udp_client.dir/client.c.i
+	$(MAKE) -f CMakeFiles/tcp_client.dir/build.make CMakeFiles/tcp_client.dir/client.c.i
 .PHONY : client.c.i
 
 client.s: client.c.s
@@ -129,7 +129,7 @@ client.s: client.c.s
 
 # target to generate assembly for a file
 client.c.s:
-	$(MAKE) -f CMakeFiles/udp_client.dir/build.make CMakeFiles/udp_client.dir/client.c.s
+	$(MAKE) -f CMakeFiles/tcp_client.dir/build.make CMakeFiles/tcp_client.dir/client.c.s
 .PHONY : client.c.s
 
 # Help Target
@@ -140,7 +140,7 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... udp_client"
+	@echo "... tcp_client"
 	@echo "... client.o"
 	@echo "... client.i"
 	@echo "... client.s"

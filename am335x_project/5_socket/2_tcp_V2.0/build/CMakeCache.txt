@@ -116,7 +116,7 @@ CMAKE_OBJCOPY:FILEPATH=/usr/bin/objcopy
 CMAKE_OBJDUMP:FILEPATH=/usr/bin/objdump
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=udp_client
+CMAKE_PROJECT_NAME:STATIC=tcp_client
 
 //Path to a program.
 CMAKE_RANLIB:FILEPATH=/usr/bin/ranlib
@@ -152,10 +152,10 @@ CMAKE_USE_RELATIVE_PATHS:BOOL=OFF
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
 //Value Computed by CMake
-udp_client_BINARY_DIR:STATIC=/mnt/hgfs/Ubuntu12.04.5_i386/App/yyh_app/am335x_project/5_socket/2_tcp_V2.0/build
+tcp_client_BINARY_DIR:STATIC=/mnt/hgfs/Ubuntu12.04.5_i386/App/yyh_app/am335x_project/5_socket/2_tcp_V2.0/build
 
 //Value Computed by CMake
-udp_client_SOURCE_DIR:STATIC=/mnt/hgfs/Ubuntu12.04.5_i386/App/yyh_app/am335x_project/5_socket/2_tcp_V2.0
+tcp_client_SOURCE_DIR:STATIC=/mnt/hgfs/Ubuntu12.04.5_i386/App/yyh_app/am335x_project/5_socket/2_tcp_V2.0
 
 
 ########################
