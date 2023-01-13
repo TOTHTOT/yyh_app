@@ -315,8 +315,7 @@ int judge_client_num_is_available(const struct client_num_st client_num, int num
 
 /**
  * @name: thr_connect
- * @msg: 每当有一个客户端接入就创建一个线程,
- *       线程中负责接收数据
+ * @msg: 接收 client 发送的数据
  * @param {void} *ptr
  * @return {*}
  */
@@ -366,7 +365,7 @@ static void *thr_connect(void *ptr)
                             pthread_rwlock_unlock(&p_data->manage_client->client_num_rw_lock);
                             // DEBUG_PRINT("SFD:%d event:%d\n", p_ep_event_data->fd, p_data->manage_client->ep_event[i].events);
 
-                            // client 断开连接也要取消一次, 切换状态了要把 阻塞的 thr_connect 线程杀死然后重启
+                            // client 断开连接也要取消一次, 切换状态了要把 阻塞的 thr_server_send 线程杀死然后重启
                             if (pthread_cancel(p_data->manage_client->tid_server_send) < 0)
                             {
                                 perror("pthread_cancel() err");
@@ -446,7 +445,7 @@ static void *thr_server_link(void *ptr)
                 p_thr_client->server_link_state = STATE_LINKED; // 有一个 client 连接进来就进入 STATE_LINKED 态
                 printf("Client num:%d sfd:%d addr:%s\n", available_client_num, p_thr_client->thr_connect_data->sfd_client[available_client_num], inet_ntoa(socket_client_addr[available_client_num].sin_addr));
                 set_client_num_link(p_thr_client, available_client_num);
-                // 切换状态了要把 阻塞的 thr_connect 线程杀死然后重启
+                // 切换状态了要把 阻塞的 thr_server_send 线程杀死然后重启
                 if (pthread_cancel(p_thr_client->tid_server_send) < 0)
                 {
                     perror("pthread_cancel() err");
