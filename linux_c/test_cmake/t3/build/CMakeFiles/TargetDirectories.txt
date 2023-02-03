@@ -1,2 +1,0 @@
-/home/yyh/Work/linux/App/yyh_app/test_cmake/t3/build/CMakeFiles/Demo3.dir
-/home/yyh/Work/linux/App/yyh_app/test_cmake/t3/build/math/CMakeFiles/MathFunctions.dir
