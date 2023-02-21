@@ -21,6 +21,13 @@ if [ "$#" == 0 ]; then
     exit 1
 fi
 
+# 判断 emb_general_make.sh 是否存在
+if [ ! -a emb_general_make.sh ]; then
+    echo "emb_ general_make.sh is not exist"
+    echoUsage
+    exit 1
+fi
+
 #定义一些变量
 BUILD_CLEAN_FLAG="$1"
 EMB_GENERAL_MAKE_PATH="./emb_general_make.sh"
