@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "stdlib.h": "c",
+        "string.h": "c"
+    },
+    "cmake.sourceDirectory": "${workspaceFolder}/am335x_project/5_socket/2_tcp_V2.0"
+}
