@@ -1,0 +1,10 @@
+ifneq ($(KERNELRELEASE),) #注意此行开头顶格， ifneq和括号之间有一个空格
+ obj-m:=hello.o #注意此行开头为一个空格
+else #注意此行开头顶格
+ KERNELDIR:=/home/yyh/Work/to_share/linux_kernel #注意此行开头为一个空格
+ PWD:=$(shell pwd) #注意此行开头为一个空格
+default: #注意此行开头顶格
+	$(MAKE) -C $(kerneldir) M=$(PWD) modules #注意此行开头为Tab，Tab不能用空格替代！
+endif #注意此行开头顶格
+
+

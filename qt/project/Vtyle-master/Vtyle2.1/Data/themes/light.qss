@@ -1,0 +1,279 @@
+#centralWidget{
+    background:#F0F0F0;
+}
+
+#MainWindow::separator{
+    background:white;
+}
+
+#titleWid{
+    background:#867199;
+}
+#titleText{
+    background:#867199;
+    color:white;
+    font-size:27px;
+}
+#titleIcon{
+    background:#867199;
+}
+#titleButton{
+    background:white;
+}
+#titleButton:hover{
+    background:rgb(40,44,52);
+}
+
+#TextEdit {
+    background: white;
+    color: #867199;
+    font-size: 50px;
+}
+
+#completer{
+    color:#867199;
+    background-color:white;
+    font-size:30px;
+}
+
+#mainMenuBar{
+    background:#867199;
+    color:#FFF;
+    font-size:23px;
+}
+#mainMenuBar::item{
+    background-color:#867199;
+}
+#mainMenuBar::item:selected{
+    background-color:#C5AFC2;
+}
+
+#windowMenu{
+    color:#867199;
+    border:none;
+}
+#windowMenu::item{
+    background-color:white;
+}
+#windowMenu::item:selected{
+    background-color:rgb(240,240,240);
+}
+
+#windowToolBar{
+    background-color:rgb(240,240,240);
+}
+
+
+#tabWidget{
+    border:10px;
+    background-color:white;
+}
+#tabWidget::pane{
+    background-color:white;
+	border:none;
+}
+#tabBar::tab:hover{
+    color:#867199;
+	background:rgb(250,250,250);
+}
+#tabBar::tab{
+    background-color:rgb(240,240,240);
+    color:#867199;
+    font-size:22px;
+}
+#tabBar::tab:selected{
+    background:white;
+}
+#tabBar::close-button{
+    border-image: url(./Resource/TabCloseButtonLight.png);
+}
+#tabBar::close-button:hover{
+    background: rgb(200,200,200);
+}
+
+
+#introduceLabel{
+    color:#867199;
+    font-size:30px;
+}
+
+#replaceBox{
+    border:none;
+    background-color:#F0F0F0;
+    color:#867199;
+    font-size:35px;
+}
+#replaceBox QAbstractItemView::item{
+	height:36px;
+	color:#867199;
+	padding-left:9px;
+	background-color:white;
+}
+#replaceBox QAbstractItemView::item:hover{
+  background-color:rgb(240,240,240);
+}
+#replaceBox QAbstractItemView::item:selected{
+  background-color:rgb(230,230,230);
+}
+#replaceBox QScrollBar::vertical {
+background:transparent;
+width:16px;
+border:0px;
+}
+
+#replaceBox QScrollBar::handle:vertical {
+background:rgb(55,60,71);
+width:16px;
+}
+
+#replaceBox QScrollBar::add-line:vertical {
+background:none;
+border:none;
+}
+
+#replaceBox QScrollBar::sub-line:vertical {
+background:none;
+border:none;
+}
+
+#replaceBox QScrollBar::add-page:vertical {
+background:transparent;
+border:none;
+}
+
+#replaceBox QScrollBar::sub-page:vertical {
+background:transparent;
+border:none;
+}
+
+#ScrollBar:horizontal{
+
+margin:0px 16px 0px 16px;
+
+background:transparent;
+
+border:none;
+
+height:14px;
+
+}
+
+
+
+#ScrollBar::handle:horizontal{
+
+background-color:rgb(55,60,71);
+
+border-radius:20px;
+
+height:24px;
+
+}
+
+
+#ScrollBar::add-line:horizontal{
+background-color:none;
+border:none;
+}
+
+#ScrollBar::sub-line:horizontal{
+background-color:none;
+border:none;
+}
+#ScrollBar::add-page:horizontal {
+background:transparent;
+border:none;
+}
+
+#ScrollBar::sub-page:horizontal {
+background:transparent;
+border:none;
+}
+
+#ScrollBar::vertical {
+background:transparent;
+width:16px;
+border:0px;
+}
+
+#ScrollBar::handle:vertical {
+background:rgb(55,60,71);
+width:16px;
+}
+
+#ScrollBar::add-line:vertical {
+background:none;
+border:none;
+}
+
+#ScrollBar::sub-line:vertical {
+background:none;
+border:none;
+}
+
+#ScrollBar::add-page:vertical {
+background:transparent;
+border:none;
+}
+
+#ScrollBar::sub-page:vertical {
+background:transparent;
+border:none;
+}
+
+#ScrollBar:horizontal{
+
+margin:0px 16px 0px 16px;
+
+background:transparent;
+
+border:none;
+
+height:24px;
+
+}
+
+
+
+#ScrollBar::handle:horizontal{
+
+background-color:rgb(55,60,71);
+
+border-radius:20px;
+
+height:24px;
+
+}
+
+
+#ScrollBar::add-line:horizontal{
+background-color:none;
+border:none;
+}
+
+#ScrollBar::sub-line:horizontal{
+background-color:none;
+border:none;
+}
+#ScrollBar::add-page:horizontal {
+background:transparent;
+border:none;
+}
+
+#ScrollBar::sub-page:horizontal {
+background:transparent;
+border:none;
+}
+
+#colorSpl::handle{
+    background:white;
+    height:40px;
+}
+
+#colorWheel::title{
+    border:none;
+    background:#F0F0F0;
+}
+#addButton{
+    color:#867199;
+}

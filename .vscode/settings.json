@@ -1,7 +1,13 @@
 {
     "files.associations": {
         "stdlib.h": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "module.h": "c",
+        "kern_levels.h": "c",
+        "delay.h": "c",
+        "ide.h": "c",
+        "init.h": "c"
     },
-    "cmake.sourceDirectory": "${workspaceFolder}/am335x_project/5_socket/2_tcp_V2.0"
+    "cmake.sourceDirectory": "${workspaceFolder}/am335x_project/5_socket/2_tcp_V2.0",
+    "svn.ignoreMissingSvnWarning": true
 }

@@ -22,7 +22,7 @@ if [ "$#" == 0 ]; then
 fi
 
 # 判断 emb_general_make.sh 是否存在
-if [ ! -a emb_general_make.sh ]; then
+if [ ! -e emb_general_make.sh ]; then
     echo "emb_ general_make.sh is not exist"
     echoUsage
     exit 1
@@ -42,6 +42,7 @@ fi
 if [ ${BUILD_CLEAN_FLAG} == "clean_all" ]; then
     ./emb_general_make.sh communicate clean
     ./emb_general_make.sh emb_app clean
+    
 elif [ ${BUILD_CLEAN_FLAG} == "clean_emb" ]; then
     ./emb_general_make.sh emb_app clean
 elif [ ${BUILD_CLEAN_FLAG} == "clean_com" ]; then

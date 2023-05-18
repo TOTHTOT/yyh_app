@@ -1,0 +1,2 @@
+/mnt/hgfs/Ubuntu12.04.5_i386/App/yyh_app/linux_driver/2_hello_world/hello_device.ko
+/mnt/hgfs/Ubuntu12.04.5_i386/App/yyh_app/linux_driver/2_hello_world/hello_device.o

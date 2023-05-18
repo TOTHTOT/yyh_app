@@ -1,0 +1,22 @@
+QProgressBar{
+	border:9 solid black;
+	height: 30;
+	border-image:url(:/images/battery.png);
+	text-align:center;
+	font:20px;
+	color:white;
+	border-radius:10px;
+}
+QMainWindow
+{
+    background-color:#323232;
+}
+
+QProgressBar::chunk{
+	height: 10;
+	border-radius:6px;
+	border:1px solid black;
+	background-color:skyblue;
+	width:10px;
+	margin:1px;
+}
