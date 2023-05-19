@@ -6,7 +6,9 @@
         "kern_levels.h": "c",
         "delay.h": "c",
         "ide.h": "c",
-        "init.h": "c"
+        "init.h": "c",
+        "semaphore.h": "c",
+        "fcntl.h": "c"
     },
     "cmake.sourceDirectory": "${workspaceFolder}/am335x_project/5_socket/2_tcp_V2.0",
     "svn.ignoreMissingSvnWarning": true
