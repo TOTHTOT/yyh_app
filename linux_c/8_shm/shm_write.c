@@ -2,7 +2,7 @@
  * @Description: 共享内存写入数据, 使用信号量实现共享内存同步
  * @Author: TOTHTOT
  * @Date: 2023-05-18 12:47:41
- * @LastEditTime: 2023-05-19 09:55:11
+ * @LastEditTime: 2023-05-19 11:44:41
  * @LastEditors: TOTHTOT
  * @FilePath: \yyh_app\linux_c\8_shm\shm_write.c
  */
@@ -125,4 +125,5 @@ int main(void)
         scanf("%s", shm_test_st_p->sex);
         sem_post(g_semr_p); // 写进程里读信号+1, 读进程里-1
     }
+3
 }
