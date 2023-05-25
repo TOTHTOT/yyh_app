@@ -1,8 +1,8 @@
 /*
- * @Description: 使用POSIX实现共享内存
+ * @Description: 使用POSIX实现共享内存, 写共享内存,
  * @Author: TOTHTOT
  * @Date: 2023-05-22 09:17:34
- * @LastEditTime: 2023-05-22 15:03:28
+ * @LastEditTime: 2023-05-22 15:50:33
  * @LastEditors: TOTHTOT
  * @FilePath: \yyh_app\linux_c\10_shm_posix\posix_shm_write.c
  */
@@ -32,7 +32,7 @@ typedef struct
 
 // 全局变量
 int g_shm_id = 0;
-sem_t *g_semr_ctrl_p = NULL;    
+sem_t *g_semr_ctrl_p = NULL;
 sem_t *g_semw_ctrl_p = NULL;
 
 void sig_fun(int signuim)
@@ -125,21 +125,23 @@ int main(void)
     ret = my_sem_init(&g_semw_ctrl_p, SEM_NAME_W, 1);
     ret = my_sem_init(&g_semr_ctrl_p, SEM_NAME_R, 0);
 
-
     printf("shm_p = %p\n", shm_p);
 
     while (1)
     {
         sem_wait(g_semw_ctrl_p);
-
+#if 0
         printf("input name:\n");
         scanf("%s", shm_p->name);
         printf("input age:\n");
         scanf("%d", &shm_p->age);
         printf("input sex:\n");
         scanf("%s", shm_p->sex);
-
-        sem_post(g_semr_ctrl_p);
+#else
+        if (shm_p->age++ > 1000000000)
+            shm_p->age = 0;
+#endif
+        sem_post(g_semw_ctrl_p);
     }
     return 0;
 }

@@ -112,6 +112,7 @@ int main(void)
 {
     shm_test *shm_p;
     int ret = 0;
+    int semw_ctrl_value = 0;
 
     signal(SIGINT, sig_fun);
 
@@ -128,10 +129,27 @@ int main(void)
     printf("shm_p = %p\n", shm_p);
     while (1)
     {
-        sem_wait(g_semr_ctrl_p);
+#if 0
+        // sem_wait(g_semr_ctrl_p);
         printf("name:%s, age:%d, sex:%s\n", shm_p->name, shm_p->age, shm_p->sex);
-        sem_post(g_semw_ctrl_p);
+
+        // 获取一下信号量计数值, 当等于0时才+1一次, 等于0说明已经写过一次-
+        sem_getvalue(g_semw_ctrl_p, &semw_ctrl_value);
+        if (semw_ctrl_value == 0)
+            sem_post(g_semw_ctrl_p);
+#else
+        sem_getvalue(g_semw_ctrl_p, &semw_ctrl_value);  // 获取信号量状态, 等于1说明写入完成
+        if (semw_ctrl_value == 1)
+        {
+            printf("age:%d\n", shm_p->age);
+        }
+        else
+        {
+            printf("writing...\n");
+        }
+#endif
+        usleep(100000);
     }
-    
+
     return 0;
 }
