@@ -1,0 +1,1 @@
+cmd_/mnt/hgfs/App/yyh_app/linux_driver/1_plantform/driver.ko := arm-none-linux-gnueabihf-ld -r  -EL  --build-id  -T ./scripts/module-common.lds -T ./arch/arm/kernel/module.lds -o /mnt/hgfs/App/yyh_app/linux_driver/1_plantform/driver.ko /mnt/hgfs/App/yyh_app/linux_driver/1_plantform/driver.o /mnt/hgfs/App/yyh_app/linux_driver/1_plantform/driver.mod.o;  true

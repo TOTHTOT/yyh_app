@@ -10,8 +10,13 @@
         "semaphore.h": "c",
         "fcntl.h": "c",
         "shm.h": "c",
-        "signal.h": "c"
+        "signal.h": "c",
+        "kernel.h": "c",
+        "const.h": "c",
+        "types.h": "c"
     },
     "cmake.sourceDirectory": "${workspaceFolder}/am335x_project/5_socket/2_tcp_V2.0",
-    "svn.ignoreMissingSvnWarning": true
+    "svn.ignoreMissingSvnWarning": true,
+    "C_Cpp.default.compilerPath": "",
+    "C_Cpp.errorSquiggles": "enabled"
 }

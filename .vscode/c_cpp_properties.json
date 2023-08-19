@@ -3,7 +3,9 @@
         {
             "name": "Win32",
             "includePath": [
-                "${default}"
+                "${default}",
+                "E:\\Work\\Linux\\kernel_include",
+                "E:\\Work\\Linux\\app_include"
             ],
             "defines": [
                 "_DEBUG",
