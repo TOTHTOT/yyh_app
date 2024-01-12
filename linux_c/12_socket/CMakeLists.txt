@@ -18,7 +18,7 @@ if(ARG STREQUAL "1")
     list(APPEND SOURCE_FILES "socket_tcp_server.c")
     target_sources(socket_tcp_server PRIVATE ${SOURCE_FILES})
 
-    elseif(ARG STREQUAL "2")
+elseif(ARG STREQUAL "2")
     add_executable(socket_tcp_server)
     list(APPEND SOURCE_FILES "2.c")
 else()

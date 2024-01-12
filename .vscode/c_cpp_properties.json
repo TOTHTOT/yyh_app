@@ -5,7 +5,8 @@
             "includePath": [
                 "${default}",
                 "E:\\Work\\Linux\\kernel_include",
-                "E:\\Work\\Linux\\app_include"
+                "E:\\Work\\Linux\\app_include",
+                "D:\\ISO\\share\\learn\\linux_c_include\\include"
             ],
             "defines": [
                 "_DEBUG",
